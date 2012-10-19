@@ -1,13 +1,20 @@
+ENV['GEM_HOME'] = $compass_dir + '/.gems'
+puts "Compass dir: #{$compass_dir}"
+
 require 'rubygems'
 require 'rubygems/dependency_installer'
 
-Gem::DependencyInstaller.new.install('compass')
-Gem::DependencyInstaller.new.install('sass')
+gem_installer = Gem::DependencyInstaller.new
+
+gem_installer.install("compass")
+gem_installer.install("sass")
 
 require 'compass'
 require 'compass/commands'
 require 'sass'
 require 'sass/plugin'
+
+
 
 module Compass
 
@@ -31,4 +38,10 @@ module Compass
     end
   end
 
+end
+
+def compile_compass(content, real_file_name)
+  cmd = Compass::Commands::UpdateProject.new($compass_dir, {:sass_files => real_file_name})
+  compiler = cmd.new_compiler_instance
+  compiler.compile_string(content, real_file_name)
 end

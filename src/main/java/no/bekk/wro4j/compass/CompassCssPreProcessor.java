@@ -62,7 +62,7 @@ public class CompassCssPreProcessor implements ResourcePreProcessor {
     }
 
     private String computePath(Resource resource) {
-        return new File(standaloneContext.getContextFolder(), resource.getUri()).getAbsolutePath();
+        return new File(standaloneContext != null ? standaloneContext.getContextFolder() : projectBaseDir, resource.getUri()).getAbsolutePath();
     }
 
     private String computeCompassBaseDir() {
