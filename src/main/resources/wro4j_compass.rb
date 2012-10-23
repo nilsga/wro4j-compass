@@ -44,8 +44,18 @@ module Compass
 
 end
 
-def compile_compass(content, real_file_name)
-  cmd = Compass::Commands::UpdateProject.new($compass_dir, {:sass_files => real_file_name})
-  compiler = cmd.new_compiler_instance
-  compiler.compile_string(content, real_file_name)
+class CompassCompiler
+    include Java::no.bekk.wro4j.compass.CompassCompiler
+
+  def initialize
+    puts "Creating compiler"
+  end
+
+  def compile(compass_dir, content, real_file_name)
+    cmd = Compass::Commands::UpdateProject.new(compass_dir, {:sass_files => real_file_name})
+    compiler = cmd.new_compiler_instance
+    compiler.compile_string(content, real_file_name)
+  end
 end
+
+CompassCompiler.new
