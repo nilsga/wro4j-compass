@@ -1,17 +1,17 @@
 package no.bekk.wro4j.compass;
 
-import no.bekk.wro4j.compass.CompassEngine;
 import org.apache.commons.io.IOUtils;
 import ro.isdc.wro.WroRuntimeException;
 import ro.isdc.wro.manager.factory.standalone.StandaloneContext;
-import ro.isdc.wro.model.group.Inject;
 import ro.isdc.wro.model.resource.Resource;
 import ro.isdc.wro.model.resource.ResourceType;
 import ro.isdc.wro.model.resource.SupportedResourceType;
-import ro.isdc.wro.model.resource.locator.factory.UriLocatorFactory;
 import ro.isdc.wro.model.resource.processor.ResourcePreProcessor;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 
 @SupportedResourceType(ResourceType.CSS)
 public class CompassCssPreProcessor implements ResourcePreProcessor {
@@ -20,8 +20,6 @@ public class CompassCssPreProcessor implements ResourcePreProcessor {
     private StandaloneContext standaloneContext;
     private String compassBaseDir;
 
-    @Inject
-    private UriLocatorFactory uriLocatorFactory;
     private File projectBaseDir;
 
     @Override
