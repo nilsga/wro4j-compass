@@ -1,19 +1,18 @@
 package no.bekk.wro4j.compass;
 
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ro.isdc.wro.WroRuntimeException;
 import ro.isdc.wro.util.StopWatch;
 
 import javax.script.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 public class CompassEngine {
 
     public static Invocable engine = null;
     private String compassBaseDir;
-    private final static Logger LOG = LoggerFactory.getLogger(CompassEngine.class);
-
 
     public CompassEngine(String compassBaseDir) {
         this.compassBaseDir = compassBaseDir;
@@ -21,9 +20,9 @@ public class CompassEngine {
 
     public String process(String content, String realFileName) {
 		final StopWatch stopWatch = new StopWatch();
-        try {
+		try {
 
-            stopWatch.start("process compass");
+			stopWatch.start("process compass");
             if(engine == null) {
                 ScriptEngine se = new ScriptEngineManager().getEngineByName("jruby");
                 Bindings b = se.getBindings(ScriptContext.GLOBAL_SCOPE);
@@ -31,16 +30,41 @@ public class CompassEngine {
                 se.eval(IOUtils.toString(getClass().getResource("/wro4j_compass.rb")), b);
                 engine = (Invocable) se;
             }
+
             return engine.invokeFunction("compile_compass", content.replace("'", "\""), realFileName).toString();
 
-        } catch (Exception e) {
+		} catch (Exception e) {
 
-            throw new WroRuntimeException(e.getMessage(), e);
+			throw new WroRuntimeException(e.getMessage(), e);
 
         } finally {
 
-            stopWatch.stop();
-            LOG.debug("Finished in: " + stopWatch.getLastTaskTimeMillis());
-        }
+			stopWatch.stop();
+            System.out.println("Finished in: " + stopWatch.getLastTaskTimeMillis());
+		}
 	}
+
+	private String buildUpdateScript(String content, String realFileName) throws IOException {
+		final StringWriter raw = new StringWriter();
+		final PrintWriter script = new PrintWriter(raw);
+
+        script.println("ENV['GEM_HOME'] = '" + compassBaseDir + "/.gem'");
+        String compassScript = IOUtils.toString(getClass().getResource("/wro4j_compass.rb"));
+
+        script.println(compassScript);
+        script.println("cmd = Compass::Commands::UpdateProject.new('" + compassBaseDir + "', {:sass_files => '" + realFileName + "'})");
+        script.println("compiler = cmd.new_compiler_instance");
+		script.println("compiler.compile_string('" + content.replace("'", "\"") + "', '" + realFileName + "')");
+
+		return raw.toString();
+	}
+
+    
+    public static void main(String[] args) throws Exception {
+        ScriptEngine engine = new ScriptEngineManager().getEngineByName("jruby");
+        CompiledScript sc = ((Compilable)engine).compile("e = $a\ne");
+        Bindings bindings = engine.getBindings(ScriptContext.GLOBAL_SCOPE);
+        bindings.put("a", "Test");
+        System.out.println(sc.eval(bindings));
+    }
 }
