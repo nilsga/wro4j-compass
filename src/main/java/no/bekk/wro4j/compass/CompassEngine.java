@@ -3,17 +3,11 @@ package no.bekk.wro4j.compass;
 import org.apache.commons.io.IOUtils;
 import org.jruby.CompatVersion;
 import org.jruby.RubyInstanceConfig;
-import org.jruby.embed.PathType;
 import org.jruby.embed.ScriptingContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ro.isdc.wro.WroRuntimeException;
 import ro.isdc.wro.util.StopWatch;
-
-import javax.script.*;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 public class CompassEngine {
 
@@ -54,12 +48,4 @@ public class CompassEngine {
             LOG.debug("Finished in: {}", stopWatch.getLastTaskTimeMillis());
 		}
 	}
-    
-    public static void main(String[] args) throws Exception {
-        ScriptEngine engine = new ScriptEngineManager().getEngineByName("jruby");
-        CompiledScript sc = ((Compilable)engine).compile("e = $a\ne");
-        Bindings bindings = engine.getBindings(ScriptContext.GLOBAL_SCOPE);
-        bindings.put("a", "Test");
-        System.out.println(sc.eval(bindings));
-    }
 }
