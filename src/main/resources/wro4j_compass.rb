@@ -5,6 +5,7 @@ require 'rubygems'
 require 'rubygems/dependency_installer'
 
 if !File.exist?($compass_dir + '/.gems')
+    gem_installer = Gem::DependencyInstaller.new
     puts "GEM_HOME does not exist. Installing gems"
     gem_installer.install("compass")
     gem_installer.install("sass")
