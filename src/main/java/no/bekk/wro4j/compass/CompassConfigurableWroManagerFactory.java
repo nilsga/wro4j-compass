@@ -32,9 +32,11 @@ public class CompassConfigurableWroManagerFactory extends ConfigurableWroManager
                     CompassCssPreProcessor processor = (CompassCssPreProcessor) pp;
                     Properties props = createProperties();
                     String compassBaseDir = props.getProperty("compassBaseDir");
+                    String gemHome = props.getProperty("gemHome", (compassBaseDir != null ? compassBaseDir + "./gems" : null));
                     processor.setStandaloneContext(standaloneContext);
                     processor.setProjectBaseDir(computeProjectDir());
                     processor.setCompassBaseDir(compassBaseDir);
+                    processor.setGemHome(gemHome);
                 }
             }
         }

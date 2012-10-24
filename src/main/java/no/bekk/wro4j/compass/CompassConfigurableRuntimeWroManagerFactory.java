@@ -26,8 +26,10 @@ public class CompassConfigurableRuntimeWroManagerFactory extends ConfigurableWro
                     CompassCssPreProcessor processor = (CompassCssPreProcessor) pp;
                     Properties props = newConfigProperties();
                     String compassBaseDir = props.getProperty("compassBaseDir");
+                    String gemHome = props.getProperty("gemHome", (compassBaseDir != null ? compassBaseDir + "./gems" : null));
                     processor.setCompassBaseDir(compassBaseDir);
                     processor.setProjectBaseDir(computeProjectDir(servletContext));
+                    processor.setGemHome(gemHome);
                 }
             }
         }

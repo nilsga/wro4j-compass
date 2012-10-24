@@ -21,6 +21,7 @@ public class CompassCssPreProcessor implements ResourcePreProcessor {
     private String compassBaseDir;
 
     private File projectBaseDir;
+    private String gemHome;
 
     @Override
 	public void process(Resource resource, Reader reader, Writer writer) throws IOException {
@@ -28,7 +29,7 @@ public class CompassCssPreProcessor implements ResourcePreProcessor {
 		final String content = IOUtils.toString(reader);
 		
 		try {
-			String result =  new CompassEngine(computeCompassBaseDir()).process(content, computePath(resource));
+			String result =  new CompassEngine(computePath(compassBaseDir), computePath(gemHome)).process(content, computePath(resource));
 			writer.write(result);
 		} catch (final WroRuntimeException e) {
 			onException(e);
@@ -63,12 +64,17 @@ public class CompassCssPreProcessor implements ResourcePreProcessor {
         return new File(standaloneContext != null ? standaloneContext.getContextFolder() : projectBaseDir, resource.getUri()).getAbsolutePath();
     }
 
-    private String computeCompassBaseDir() {
-        if(compassBaseDir == null) {
+
+    private String computePath(String relativePath) {
+        if(relativePath == null) {
             return projectBaseDir.getAbsolutePath();
         }
         else {
-            return new File(projectBaseDir, compassBaseDir).getAbsolutePath();
+            return new File(projectBaseDir, relativePath).getAbsolutePath();
         }
+    }
+
+    public void setGemHome(String gemHome) {
+        this.gemHome = gemHome;
     }
 }

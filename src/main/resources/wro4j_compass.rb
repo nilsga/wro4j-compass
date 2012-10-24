@@ -1,10 +1,10 @@
-ENV['GEM_HOME'] = $compass_dir + '/.gems'
-puts "Compass dir: #{$compass_dir}"
+ENV['GEM_HOME'] = $gem_home
+puts "Compass dir: #{$gem_home}"
 
 require 'rubygems'
 require 'rubygems/dependency_installer'
 
-if !File.exist?($compass_dir + '/.gems')
+if !File.exist?($gem_home)
     gem_installer = Gem::DependencyInstaller.new
     puts "GEM_HOME does not exist. Installing gems"
     gem_installer.install("compass")
