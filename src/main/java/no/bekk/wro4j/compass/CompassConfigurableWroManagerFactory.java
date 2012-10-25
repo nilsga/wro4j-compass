@@ -2,13 +2,14 @@ package no.bekk.wro4j.compass;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ro.isdc.wro.manager.WroManager;
+import ro.isdc.wro.config.metadata.MetaDataFactory;
 import ro.isdc.wro.manager.factory.standalone.StandaloneContext;
 import ro.isdc.wro.maven.plugin.manager.factory.ConfigurableWroManagerFactory;
-import ro.isdc.wro.model.resource.processor.ResourcePreProcessor;
 
 import java.io.File;
-import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 public class CompassConfigurableWroManagerFactory extends ConfigurableWroManagerFactory  {
@@ -20,27 +21,35 @@ public class CompassConfigurableWroManagerFactory extends ConfigurableWroManager
     @Override
     public void initialize(StandaloneContext standaloneContext) {
         this.standaloneContext = standaloneContext;
-        super.initialize(standaloneContext);    //To change body of overridden methods use File | Settings | File Templates.
+        super.initialize(standaloneContext); 
     }
 
     @Override
-    protected void onAfterInitializeManager(WroManager manager) {
-        Collection<ResourcePreProcessor> resourcePreProcessors = manager.getProcessorsFactory().getPreProcessors();
-        if(resourcePreProcessors != null) {
-            for(ResourcePreProcessor pp : resourcePreProcessors) {
-                if(pp instanceof CompassCssPreProcessor) {
-                    CompassCssPreProcessor processor = (CompassCssPreProcessor) pp;
-                    Properties props = createProperties();
-                    String compassBaseDir = props.getProperty("compassBaseDir");
-                    String gemHome = props.getProperty("gemHome", (compassBaseDir != null ? compassBaseDir + "./gems" : null));
-                    processor.setStandaloneContext(standaloneContext);
-                    processor.setProjectBaseDir(computeProjectDir());
-                    processor.setCompassBaseDir(compassBaseDir);
-                    processor.setGemHome(gemHome);
-                }
+    protected MetaDataFactory newMetaDataFactory() {
+
+        final MetaDataFactory parent = super.newMetaDataFactory();
+        final Map<String, Object> parentProps = parent.create();
+        final Properties props = createProperties();
+        final String compassBaseDir = props.getProperty("compassBaseDir");
+        final String gemHome = props.getProperty("gemHome", (compassBaseDir != null ? compassBaseDir + "./gems" : null));
+        final File projectBaseDir = computeProjectDir();
+        return new MetaDataFactory() {
+
+            private Map<String, Object> map = new HashMap<String, Object>();
+
+            {
+                map.putAll(parentProps);
+                map.put("compassBaseDir", compassBaseDir);
+                map.put("gemHome", gemHome);
+                map.put("projectBaseDir", projectBaseDir);
+                map.put("standaloneContext", standaloneContext);
             }
-        }
-        super.onAfterInitializeManager(manager);    //To change body of overridden methods use File | Settings | File Templates.
+
+            @Override
+            public Map<String, Object> create() {
+                return Collections.unmodifiableMap(map);
+            }
+        };
     }
 
     private File computeProjectDir() {

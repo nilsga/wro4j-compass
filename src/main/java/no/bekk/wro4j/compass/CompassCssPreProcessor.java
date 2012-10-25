@@ -2,7 +2,9 @@ package no.bekk.wro4j.compass;
 
 import org.apache.commons.io.IOUtils;
 import ro.isdc.wro.WroRuntimeException;
+import ro.isdc.wro.config.metadata.MetaDataFactory;
 import ro.isdc.wro.manager.factory.standalone.StandaloneContext;
+import ro.isdc.wro.model.group.Inject;
 import ro.isdc.wro.model.resource.Resource;
 import ro.isdc.wro.model.resource.ResourceType;
 import ro.isdc.wro.model.resource.SupportedResourceType;
@@ -12,24 +14,29 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.Map;
 
 @SupportedResourceType(ResourceType.CSS)
 public class CompassCssPreProcessor implements ResourcePreProcessor {
 
 	public static final String ALIAS = "compassCss";
-    private StandaloneContext standaloneContext;
-    private String compassBaseDir;
 
-    private File projectBaseDir;
-    private String gemHome;
+    @Inject
+    private MetaDataFactory metaDataFactory;
 
     @Override
 	public void process(Resource resource, Reader reader, Writer writer) throws IOException {
 
+        Map<String, Object> props = metaDataFactory.create();
+        File projectBaseDir = (File) props.get("projectBaseDir");
+        StandaloneContext context = (StandaloneContext) props.get("standaloneContext");
+        String compassBaseDir = (String) props.get("compassBaseDir");
+        String gemHome = (String)props.get("gemHome");
+
 		final String content = IOUtils.toString(reader);
 		
 		try {
-			String result =  new CompassEngine(computePath(compassBaseDir), computePath(gemHome)).process(content, computePath(resource));
+			String result =  new CompassEngine(computePath(projectBaseDir, compassBaseDir), computePath(projectBaseDir, gemHome)).process(content, computeResourcePath(resource, context, projectBaseDir));
 			writer.write(result);
 		} catch (final WroRuntimeException e) {
 			onException(e);
@@ -47,25 +54,12 @@ public class CompassCssPreProcessor implements ResourcePreProcessor {
 		e.printStackTrace();
 	}
 
-
-    public void setStandaloneContext(StandaloneContext standaloneContext) {
-        this.standaloneContext = standaloneContext;
-    }
-
-    public void setCompassBaseDir(String compassBaseDir) {
-        this.compassBaseDir = compassBaseDir;
-    }
-
-    public void setProjectBaseDir(File file) {
-        this.projectBaseDir = file;
-    }
-
-    private String computePath(Resource resource) {
+    private String computeResourcePath(Resource resource, StandaloneContext standaloneContext, File projectBaseDir) {
         return new File(standaloneContext != null ? standaloneContext.getContextFolder() : projectBaseDir, resource.getUri()).getAbsolutePath();
     }
 
 
-    private String computePath(String relativePath) {
+    private String computePath(File projectBaseDir, String relativePath) {
         if(relativePath == null) {
             return projectBaseDir.getAbsolutePath();
         }
@@ -74,7 +68,4 @@ public class CompassCssPreProcessor implements ResourcePreProcessor {
         }
     }
 
-    public void setGemHome(String gemHome) {
-        this.gemHome = gemHome;
-    }
 }
