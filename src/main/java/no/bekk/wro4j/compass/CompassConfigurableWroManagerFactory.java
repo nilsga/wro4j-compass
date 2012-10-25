@@ -29,20 +29,20 @@ public class CompassConfigurableWroManagerFactory extends ConfigurableWroManager
 
         final MetaDataFactory parent = super.newMetaDataFactory();
         final Map<String, Object> parentProps = parent.create();
-        final Properties props = createProperties();
-        final String compassBaseDir = props.getProperty("compassBaseDir");
-        final String gemHome = props.getProperty("gemHome", (compassBaseDir != null ? compassBaseDir + "./gems" : null));
-        final File projectBaseDir = computeProjectDir();
+        Properties props = createProperties();
+        String compassBaseDir = props.getProperty("compassBaseDir");
+        final CompassSettings compassSettings = new CompassSettings();
+        compassSettings.setProjectBaseDir(computeProjectDir());
+        compassSettings.setGemHome(props.getProperty("gemHome", (compassBaseDir != null ? compassBaseDir + "./gems" : null)));
+        compassSettings.setCompassBaseDir(compassBaseDir);
+        compassSettings.setStandaloneContext(standaloneContext);
         return new MetaDataFactory() {
 
             private Map<String, Object> map = new HashMap<String, Object>();
 
             {
                 map.putAll(parentProps);
-                map.put("compassBaseDir", compassBaseDir);
-                map.put("gemHome", gemHome);
-                map.put("projectBaseDir", projectBaseDir);
-                map.put("standaloneContext", standaloneContext);
+                map.put("compassSettings", compassSettings);
             }
 
             @Override

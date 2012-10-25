@@ -28,10 +28,11 @@ public class CompassCssPreProcessor implements ResourcePreProcessor {
 	public void process(Resource resource, Reader reader, Writer writer) throws IOException {
 
         Map<String, Object> props = metaDataFactory.create();
-        File projectBaseDir = (File) props.get("projectBaseDir");
-        StandaloneContext context = (StandaloneContext) props.get("standaloneContext");
-        String compassBaseDir = (String) props.get("compassBaseDir");
-        String gemHome = (String)props.get("gemHome");
+        CompassSettings compassSettings = (CompassSettings) props.get("compassSettings");
+        File projectBaseDir = compassSettings.getProjectBaseDir();
+        StandaloneContext context = compassSettings.getStandaloneContext();
+        String compassBaseDir = compassSettings.getCompassBaseDir();
+        String gemHome = compassSettings.getGemHome();
 
 		final String content = IOUtils.toString(reader);
 		
