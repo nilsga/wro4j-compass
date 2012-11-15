@@ -1,5 +1,5 @@
 ENV['GEM_HOME'] = $gem_home
-puts "Compass dir: #{$gem_home}"
+puts "Gem home: #{$gem_home}"
 
 require 'rubygems'
 require 'rubygems/dependency_installer'
