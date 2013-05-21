@@ -12,6 +12,7 @@
     <description>Adds provider to handle compilation of compass css files as part of Wro4j's pre/post-processors.</description>
     <properties>
         <wro4j.version>1.6.3</wro4j.version>
+        <jruby.version>1.7.3</jruby.version>
     </properties>
 
     <dependencies>
@@ -33,7 +34,7 @@
         <dependency>
             <groupId>org.jruby</groupId>
             <artifactId>jruby-complete</artifactId>
-            <version>1.6.8</version>
+            <version>${jruby.version}</version>
         </dependency>
     </dependencies>
     <build>

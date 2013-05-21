@@ -30,7 +30,7 @@ public class CompassEngine {
             if(container == null) {
                 container = new ScriptingContainer();
                 container.setCompileMode(RubyInstanceConfig.CompileMode.JIT);
-                container.setCompatVersion(CompatVersion.RUBY1_8);
+                container.setCompatVersion(CompatVersion.RUBY1_9);
                 System.out.println("JRuby Scripting Compile mode: " + container.getCompileMode());
                 System.out.println("JRuby supported version: " + container.getSupportedRubyVersion());
                 container.put("$gem_home", gemHome);
@@ -41,7 +41,7 @@ public class CompassEngine {
             return compiler.compile(compassBaseDir, content.replace("'", "\""), realFileName);
 
 		} catch (Exception e) {
-
+            e.printStackTrace();
 			throw new WroRuntimeException(e.getMessage(), e);
 
         } finally {

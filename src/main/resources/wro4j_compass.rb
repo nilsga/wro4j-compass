@@ -26,6 +26,7 @@ module Compass
   class Compiler
 
     def compile_string(str, sass_file_name)
+       puts "Compiling #{sass_file_name}"
        start_time = end_time = nil
         css_content = logger.red do
           timed do
@@ -53,7 +54,7 @@ class CompassCompiler
   end
 
   def compile(compass_dir, content, real_file_name)
-    cmd = Compass::Commands::UpdateProject.new(compass_dir, {:sass_files => real_file_name})
+    cmd = Compass::Commands::UpdateProject.new(compass_dir, {:sass_files => [real_file_name]})
     compiler = cmd.new_compiler_instance
     compiler.compile_string(content, real_file_name)
   end
