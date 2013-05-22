@@ -23,7 +23,7 @@ HOW TO USE
     <dependency>
       <groupId>no.bekk.wro4j</groupId>
       <artifactId>wro4j-compass</artifactId>
-      <version>0.1-SNAPSHOT</version>
+      <version>1.6.3-SNAPSHOT</version>
     </dependency>
   </dependencies>
 </plugin>
