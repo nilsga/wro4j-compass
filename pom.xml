@@ -6,12 +6,12 @@
 
     <groupId>no.bekk.wro4j</groupId>
     <artifactId>wro4j-compass</artifactId>
-    <version>1.6.3-SNAPSHOT</version>
+    <version>1.7.0</version>
     <packaging>jar</packaging>
     <name>Wro4j compass extensions</name>
     <description>Adds provider to handle compilation of compass css files as part of Wro4j's pre/post-processors.</description>
     <properties>
-        <wro4j.version>1.6.3</wro4j.version>
+        <wro4j.version>1.7.0</wro4j.version>
         <jruby.version>1.7.3</jruby.version>
     </properties>
 
