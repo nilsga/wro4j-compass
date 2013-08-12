@@ -27,3 +27,7 @@ HOW TO USE
     </dependency>
   </dependencies>
 </plugin>
+
+And in your wro.properties, add
+
+preProcessors=compassCss.scss
